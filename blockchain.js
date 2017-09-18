@@ -1,4 +1,5 @@
 var SHA256 = require("crypto-js/sha256");
+var pc = require("./peers.js")
 
 /**
  * Basic data structure to hold all of a block's data in one place
@@ -30,15 +31,17 @@ class BlockChain {
         this.blocks = [this.generateGenesisBlock()];
         this.locked = false;
         this.pendingData = {};
+        this.peerConn = new pc.PeerConnection(this)
 
-        // Attempts to generate a block every 30 seconds for debug/proof of concept
-        setInterval(this.generateBlock(), 30 * 1000);
+        // Attempts to generate a block every 3 seconds for debug/proof of concept
+        setInterval(()=> {this.generateBlock()}, 3 * 1000);
     }
 
     /**
      * Generates the hardcoded genesis block
      */
     generateGenesisBlock() {
+        console.log("Adding genesis block: [0]: 52b36609ba32c196688c42caca87bd03033b1d7af24f052885abe61d9ce3ad3c");
         return new Block(0, "Genesis Block", 1505691963, "",
             "52b36609ba32c196688c42caca87bd03033b1d7af24f052885abe61d9ce3ad3c");
     }
@@ -54,7 +57,8 @@ class BlockChain {
         }
 
         //TODO: Verify data
-        pendingData[key] = data;
+        this.pendingData[key] = data;
+        //console.log("Added data: [" +key+"]: " + data)
         return true;
     }
 
@@ -73,11 +77,12 @@ class BlockChain {
         var timestamp = (new Date().getTime) / 1000
         var index = this.blocks.length;
         var prevHash = this.blocks[index - 1].hash;
-        var hash = this.hashBlock(index, pendingData, timestamp, prevHash);
-        var newBlock = new Block(index, pendingData, timestamp, prevHash, hash);
+        var hash = this.hashBlock(index, this.pendingData, timestamp, prevHash);
+        var newBlock = new Block(index, this.pendingData, timestamp, prevHash, hash);
 
         this.blocks.push(newBlock);
-        pendingData = {};
+        console.log("Added block: ["+index+"]: " + hash);
+        this.pendingData = {};
 
         this.locked = false;
     }
@@ -180,3 +185,10 @@ class BlockChain {
         }
     }
 }
+
+var bc = new BlockChain();
+var i = 0;
+setInterval(function() {
+    i++;
+    bc.addData(i.toString(),"Hello!");
+}, 100)

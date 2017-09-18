@@ -101,4 +101,4 @@ class PeerConnection {
     }
 }
 
-new PeerConnection(null);
+module.exports.PeerConnection = PeerConnection
