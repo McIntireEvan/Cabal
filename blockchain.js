@@ -167,7 +167,7 @@ class BlockChain {
      * @param {Block} block
      */
     cleanData(block) {
-        for(var key in this.pendingData.keys) {
+        for(var key in this.pendingData) {
             if(pendingData.hasOwnProperty(key)) {
                 for(var cKey in block.data) {
                     if(block.data.hasOwnProperty(cKey)) {
