@@ -94,6 +94,18 @@ class BlockChain {
     }
 
     /**
+     * Attempts to add a block from a peer
+     * @param {Block} block
+     */
+    addPeerBlock(block) {
+        if(verifyBlock(this.blocks[this.blocks.length - 1], block)) {
+            this.blocks.push(newBlock);
+        } else {
+            //TODO: Error handling, request chain
+        }
+    }
+
+    /**
      * Verifies that the index and previousHash of a block are valid
      * @param {Block} oldBlock The older block
      * @param {Block} newBlock The newer block
@@ -144,21 +156,27 @@ class BlockChain {
 
         if(otherChain.blocks.length > this.blocks.length) {
             this.blocks = otherChain.blocks;
-            var data = this.blocks[this.blocks.length - 1].data;
 
-            //Remove data that was already processed in a previous block
-            for(var key in this.pendingData.keys) {
-                if(pendingData.hasOwnProperty(key)) {
-                    for(var cKey in data) {
-                        if(data.hasOwnProperty(cKey)) {
-                            if(pendingData[key] == data[key]) {
-                                delete pendingData[key];
-                            }
+            cleanData(this.blocks[this.blocks.length - 1]);
+            return true;
+        }
+    }
+
+    /**
+     * Cleans pending data that was already included in a block
+     * @param {Block} block
+     */
+    cleanData(block) {
+        for(var key in this.pendingData.keys) {
+            if(pendingData.hasOwnProperty(key)) {
+                for(var cKey in block.data) {
+                    if(block.data.hasOwnProperty(cKey)) {
+                        if(pendingData[key] == block.data[cKey] && key == cKey) {
+                            delete pendingData[key];
                         }
                     }
                 }
             }
-            return true;
         }
     }
 }
