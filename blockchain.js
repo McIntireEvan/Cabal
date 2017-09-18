@@ -58,6 +58,7 @@ class BlockChain {
 
         //TODO: Verify data
         this.pendingData[key] = data;
+        this.peerConn.sendData({'key': key, 'data':data});
         //console.log("Added data: [" +key+"]: " + data)
         return true;
     }
@@ -187,8 +188,9 @@ class BlockChain {
 }
 
 var bc = new BlockChain();
+var bc2 = new BlockChain();
 var i = 0;
 setInterval(function() {
     i++;
-    bc.addData(i.toString(),"Hello!");
+    bc.addData(i.toString(),"Hello");
 }, 100)

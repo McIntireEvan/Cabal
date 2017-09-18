@@ -33,9 +33,17 @@ class PeerConnection {
                 this.newConnections()
             });
 
+            peer.on('data', () => {
+                this.parent.addData(data.key, data.data);
+            });
+
+            peer.on('block', (data) => {
+                this.parent.addPeerBlock(data.block);
+            });
+
             peer.on('disconnect', function() {
                 console.log("Peer disconnceted");
-            })
+            });
         });
     }
 
@@ -93,11 +101,11 @@ class PeerConnection {
     }
 
     sendData(data) {
-        io.sockets.emit('data', data);
+        io.sockets.emit('data', {'key': data.key, 'data': data.data});
     }
 
     sendBlock(block) {
-        io.sockets.emit('data', block);
+        io.sockets.emit('block', {'block':block});
     }
 }
 

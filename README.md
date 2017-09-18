@@ -1,2 +1,2 @@
 # Cabal
-A basic blockchain and associated cryptocurrency
+A work-in-progress basic blockchain and cryptocurrency platform.
